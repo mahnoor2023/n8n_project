@@ -1,0 +1,402 @@
+{
+  "name": "Book Inventory Chat Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "069a6eca-7b2e-4fcf-99af-62a42c8f096b",
+      "name": "When chat message received",
+      "webhookId": "7ecebecc-b9c9-4397-9ef8-99fb36bb262e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "3cb1b3c7-fed2-490c-8d11-dc4b9e376c8e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3.8-27b",
+        "options": {
+          "maxTokensToSample": 800
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        96,
+        208
+      ],
+      "id": "8347f1c2-c4f8-474f-ab94-6cacdaa10bba",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "20S7G1XFh9i9xzfo",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        240,
+        208
+      ],
+      "id": "807e70bd-a6b9-42f0-acc6-8ffea1fd30ee",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": " Get a record in Airtable or Search records in Airtable",
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appLdn314pITmssgB",
+          "mode": "list",
+          "cachedResultName": "Book Inventory Tracker",
+          "cachedResultUrl": "https://airtable.com/appLdn314pITmssgB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblgr8Z38BUyy0fN3",
+          "mode": "list",
+          "cachedResultName": "Books",
+          "cachedResultUrl": "https://airtable.com/appLdn314pITmssgB/tblgr8Z38BUyy0fN3"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        144
+      ],
+      "id": "c421536f-f9c5-428d-9414-7a7ec4f452a4",
+      "name": "Search records in Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "JKGaPlSfUYPEi9Tc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Update record in Airtable",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appLdn314pITmssgB",
+          "mode": "list",
+          "cachedResultName": "Book Inventory Tracker",
+          "cachedResultUrl": "https://airtable.com/appLdn314pITmssgB"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblgr8Z38BUyy0fN3",
+          "mode": "list",
+          "cachedResultName": "Books",
+          "cachedResultUrl": "https://airtable.com/appLdn314pITmssgB/tblgr8Z38BUyy0fN3"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{$fromAI(\"recordID\", \"find the id of exactt item and update it if need\")}}",
+            "Title": "={{$fromAI(\"title\", \"find the title of the book to update\")}}",
+            "Author": "={{$fromAI(\"author\", \"find the author of the book to update\")}}",
+            "Quantity on Hand": "={{$fromAI(\"newquantity\", \"update the new quantity in airtable\", \"number\")}}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Title",
+              "displayName": "Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Author",
+              "displayName": "Author",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ISBN",
+              "displayName": "ISBN",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Genre",
+              "displayName": "Genre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Fiction",
+                  "value": "Fiction"
+                },
+                {
+                  "name": "Non-Fiction",
+                  "value": "Non-Fiction"
+                },
+                {
+                  "name": "Children's",
+                  "value": "Children's"
+                },
+                {
+                  "name": "Sci-Fi/Fantasy",
+                  "value": "Sci-Fi/Fantasy"
+                },
+                {
+                  "name": "Mystery/Thriller",
+                  "value": "Mystery/Thriller"
+                },
+                {
+                  "name": "Biography/Memoir",
+                  "value": "Biography/Memoir"
+                },
+                {
+                  "name": "Romance",
+                  "value": "Romance"
+                },
+                {
+                  "name": "Reference",
+                  "value": "Reference"
+                },
+                {
+                  "name": "Other",
+                  "value": "Other"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Publisher",
+              "displayName": "Publisher",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Format",
+              "displayName": "Format",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Hardcover",
+                  "value": "Hardcover"
+                },
+                {
+                  "name": "Paperback",
+                  "value": "Paperback"
+                },
+                {
+                  "name": "eBook",
+                  "value": "eBook"
+                },
+                {
+                  "name": "Audiobook",
+                  "value": "Audiobook"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quantity on Hand",
+              "displayName": "Quantity on Hand",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Reorder Threshold",
+              "displayName": "Reorder Threshold",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Movement History",
+              "displayName": "Movement History",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        208
+      ],
+      "id": "c4602a49-b76e-40da-b080-7ce3f6c61d70",
+      "name": "Update record in Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "JKGaPlSfUYPEi9Tc",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records in Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update record in Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "5cc04a62-5617-4a61-9936-3de7b648ef2e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "887a8f6d9df216c408f3d90f478a5db3d5dfcce0f2daaf500aefd7302864956c"
+  },
+  "nodeGroups": [],
+  "id": "Z4QX2O9Cud9pYuTJ",
+  "tags": []
+}
